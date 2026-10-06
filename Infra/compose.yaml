@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: sm_maf_demo
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "demo", "-d", "sm_maf_demo"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
+
+  db-init:
+    image: postgres:17
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: demo
+    volumes:
+      - ./Scripts/script.sql:/scripts/script.sql:ro
+    command:
+      - psql
+      - --host=postgres
+      - --username=demo
+      - --dbname=sm_maf_demo
+      - --set=ON_ERROR_STOP=1
+      - --single-transaction
+      - --file=/scripts/script.sql
+    restart: "no"
+
+volumes:
+  postgres_data:
