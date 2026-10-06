@@ -9,8 +9,15 @@ CREATE TABLE IF NOT EXISTS recomendations (
 
 CREATE INDEX IF NOT EXISTS idx_recomendations ON recomendations USING HNSW (embedding vector_l2_ops);
 
+CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      description TEXT NOT NULL
+);
 
-INSERT INTO products VALUES(1, 'Brazilian Coffee', 'robust', 'One of the most popular coffees in the world', 'Brazilian coffee is famous for its balanced and approachable flavors. Most Brazilian beans lean towards a mild, nutty taste with hints of chocolate. Some regions, like Minas Gerais, produce coffee with a sweet, nutty profile, while areas like Bahia are known for their fruity, lively notes.')
+INSERT INTO products VALUES(1, 'Brazilian Coffee', 'robust', 'One of the most popular coffees in the world', 'Brazilian coffee is famous for its balanced and approachable flavors. Most Brazilian beans lean towards a mild, nutty taste with hints of chocolate. Some regions, like Minas Gerais, produce coffee with a sweet, nutty profile, while areas like Bahia are known for their fruity, lively notes.');
 
 INSERT INTO products (id, title, category, summary, description) VALUES
     (2, 'Colombian Coffee', 'robust', 'Known for its balanced, smooth flavor and rich aroma', 'Colombian coffee is celebrated for its well-rounded flavor profile. It often features a smooth, medium body with a bright acidity and notes of citrus or red berries. The country''s diverse geography allows for a wide range of flavor nuances, from the caramel sweetness of the Antioquia region to the vibrant fruitiness of Huila.');
