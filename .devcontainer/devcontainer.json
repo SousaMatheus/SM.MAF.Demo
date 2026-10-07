@@ -1,0 +1,18 @@
+{
+  "name": "SM.MAF.Demo",
+
+  // Mesma imagem que o Codespaces usa quando o repositório não tem devcontainer.json.
+  // Já inclui .NET, Docker (docker-in-docker), Node, Python, Git etc.
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+
+  // Roda toda vez que o Codespace liga.
+  // Libera o tráfego entre containers na "portaria antiga" (iptables-legacy),
+  // que por padrão bloqueia as redes criadas pelo docker compose.
+  "postStartCommand": "sudo iptables-legacy -P FORWARD ACCEPT || true",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-dotnettools.csdevkit", "ms-azuretools.vscode-docker"]
+    }
+  }
+}
