@@ -34,7 +34,7 @@ services:
     environment:
       PGPASSWORD: demo
     volumes:
-      - ./Scripts/script.sql:/scripts/script.sql:ro
+      - ./Scripts:/scripts:ro
     command:
       - psql
       - --host=postgres
