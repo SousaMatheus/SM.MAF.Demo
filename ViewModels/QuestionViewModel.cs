@@ -1,4 +1,4 @@
 ﻿namespace SM.MAF.Demo.ViewModels
 {
-    public record QuestionViewModel(string Question, string Recomendation);
+    public record QuestionViewModel(string Prompt);
 }

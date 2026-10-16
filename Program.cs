@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel.Embeddings;
 using OllamaSharp;
 using Pgvector;
+using Pgvector.EntityFrameworkCore;
 using SM.MAF.Demo.Infra.Data;
 using SM.MAF.Demo.Models;
 using SM.MAF.Demo.ViewModels;
@@ -21,9 +22,7 @@ builder.Services.AddTransient(x => new OllamaApiClient(
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-
-app.MapGet("api/v1/seed", async (AppDbContext context, OllamaApiClient ollama) =>
+app.MapPost("api/v1/seed", async (AppDbContext context, OllamaApiClient ollama) =>
 {
     var products = await context.Products.AsNoTracking().ToListAsync();
 
@@ -48,6 +47,9 @@ app.MapGet("api/v1/seed", async (AppDbContext context, OllamaApiClient ollama) =
 
 app.MapPost("api/v1/product", async (AppDbContext context, OllamaApiClient ollama, ProductViewModel product) =>
 {
+    if(string.IsNullOrWhiteSpace(product.Title) || string.IsNullOrWhiteSpace(product.Category))
+        return Results.BadRequest();
+
     var service = ollama.AsTextEmbeddingGenerationService();
     var embedding = await service.GenerateEmbeddingAsync(product.Category);
 
@@ -62,6 +64,23 @@ app.MapPost("api/v1/product", async (AppDbContext context, OllamaApiClient ollam
     await context.SaveChangesAsync();
 
     return Results.Created();
+});
+
+app.MapPost("api/v1/recomendation", async (AppDbContext context, OllamaApiClient ollama, QuestionViewModel model) =>
+{
+    if(string.IsNullOrWhiteSpace(model.Prompt))
+        return Results.BadRequest();
+
+    var service = ollama.AsTextEmbeddingGenerationService();
+    var embedding = await service.GenerateEmbeddingAsync(model.Prompt);
+
+    var recomendations = await context.Recomendations
+        .OrderBy(x => x.Embedding.CosineDistance(new Vector(embedding.ToArray())))
+        .Take(3)
+        .Select(x => new { x.Title, x.Category })
+        .ToListAsync();
+
+    return Results.Ok(recomendations);
 });
 
 app.Run();
