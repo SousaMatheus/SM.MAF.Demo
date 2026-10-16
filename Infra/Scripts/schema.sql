@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS recomendations (
 	    embedding vector (1024) NOT NULL
     );
 
-CREATE INDEX IF NOT EXISTS idx_recomendations ON recomendations USING HNSW (embedding vector_l2_ops);
+CREATE INDEX IF NOT EXISTS idx_recomendations ON recomendations USING HNSW (embedding vector_cosine_ops);
 
 CREATE TABLE IF NOT EXISTS products (
       id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
